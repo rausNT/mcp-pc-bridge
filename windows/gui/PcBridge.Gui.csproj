@@ -14,5 +14,8 @@
     <EmbeddedResource Include="../../dist/pc-bridge-core.exe" LogicalName="PcBridge.Core" />
     <EmbeddedResource Include="../../dist/mcp-pc-bridge-server.tar.gz" LogicalName="PcBridge.Server" />
     <EmbeddedResource Include="../../dist/mcp-pc-bridge-plugin-template.zip" LogicalName="PcBridge.Plugin" />
+    <EmbeddedResource Include="../../licenses/*.txt" LogicalName="PcBridge.Licenses.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../LICENSE" LogicalName="PcBridge.Licenses.LICENSE" />
+    <EmbeddedResource Include="../../THIRD_PARTY_NOTICES.md" LogicalName="PcBridge.Licenses.THIRD_PARTY_NOTICES.md" />
   </ItemGroup>
 </Project>

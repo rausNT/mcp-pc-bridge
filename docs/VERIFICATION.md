@@ -17,9 +17,13 @@ Date: 2026-10-18. Candidate: `0.2.0-preview.1`. Results apply to the independent
 
 ## Release and CI gates
 
-Fresh Git history, final release hashes/embedded payload comparison, GitHub CI, new-repository publication and anonymous asset access are publisher gates. Do not infer completion from this preparation record; the release notes link the final CI result and identify the published tag.
+A new root-only Git history was created in `project/` and scanned with Gitleaks: no findings. Commit identity uses the owner's public GitHub noreply address. The predecessor repository/history were not touched.
 
-CI is configured for Ubuntu 24.04 and Windows 2025: dependency/license/audit checks, original agent tests, relay/OAuth/certificate tests, WPF/Go tests and packaging. A disposable GitHub-hosted Ubuntu runner additionally runs the real fresh server installer and checks actual SSH local forwarding and denied shell/reverse/Unix forwarding. That script never targets an external server.
+`python tools/verify_release.py` passed locally, including all six asset checksums, archive path/integrity checks, plugin placeholders, EXE version, byte-for-byte matching embedded server/plugin/core payloads and embedded license texts. Standalone executables retain their required notices.
+
+[Initial CI run](https://github.com/rausNT/mcp-pc-bridge/actions/runs/39115247350): Ubuntu 24.04 Linux tests and the real disposable-server installation/SSH acceptance passed. The server test installed dedicated services, rejected a second installation without changing credentials, established real local SSH forwarding and confirmed shell/reverse TCP/Unix forwarding denial. It used a synthetic certificate and a GitHub-hosted runner; it did not test public DNS/ACME/ChatGPT consent. Windows build results and final commit/tag are linked in the release notes.
+
+CI is configured for Ubuntu 24.04 and Windows 2025: license/audit checks, original agent tests, relay/OAuth/certificate tests, WPF/Go tests and final packaging. Publication requires all three jobs to pass for the released commit. Public visibility and anonymous download checks are performed only after that gate.
 
 ## Explicitly unverified
 

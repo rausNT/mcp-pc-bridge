@@ -41,11 +41,15 @@ def verify():
     if sys.platform=='win32':
         result=subprocess.run([str(out/'pc-bridge-core.exe'),'version'],capture_output=True,text=True,check=True)
         assert result.stdout.strip()=='MCP PC Bridge 0.2.0-preview.1'
+        notices=subprocess.check_output([str(out/'pc-bridge-core.exe'),'licenses'])
+        assert notices==(ROOT/'windows/client/notices.txt').read_bytes(),'Core license notices differ'
         (ROOT/'.local').mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(prefix='release-verification-',dir=ROOT/'.local') as d:
             target=pathlib.Path(d)/'embedded'
             subprocess.run([str(out/'pc-bridge.exe'),'--verify-release',str(target)],check=True,timeout=60)
             for name in ('pc-bridge-core.exe','mcp-pc-bridge-server.tar.gz','mcp-pc-bridge-plugin-template.zip'):
                 assert digest((target/name).read_bytes())==found[name],'GUI embeds a different payload: '+name
+            for source in [*(ROOT/'licenses').glob('*.txt'),ROOT/'LICENSE',ROOT/'THIRD_PARTY_NOTICES.md']:
+                assert digest((target/'licenses'/source.name).read_bytes())==digest(source.read_bytes()),'Embedded license differs: '+source.name
     print('RELEASE_VERIFICATION_PASSED: archives, manifests, licenses, checksums and embedded GUI payloads')
 if __name__=='__main__':verify()

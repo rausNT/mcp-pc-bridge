@@ -20,6 +20,12 @@ public partial class App : Application
                     using var source=Assembly.GetExecutingAssembly().GetManifestResourceStream(resource) ?? throw new FileNotFoundException(resource);
                     using var file=File.Create(Path.Combine(target,name));source.CopyTo(file);
                 }
+                Directory.CreateDirectory(Path.Combine(target,"licenses"));
+                foreach(var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(n=>n.StartsWith("PcBridge.Licenses.")))
+                {
+                    using var source=Assembly.GetExecutingAssembly().GetManifestResourceStream(resource)!;
+                    using var file=File.Create(Path.Combine(target,"licenses",resource["PcBridge.Licenses.".Length..]));source.CopyTo(file);
+                }
                 Shutdown(0);
             }
             catch { Shutdown(1); }

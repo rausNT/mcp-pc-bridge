@@ -15,3 +15,5 @@ The GUI includes the .NET 10.0.8 Windows Desktop runtime. The complete license a
 OpenSSH, Python, OpenSSL, systemd, Certbot and operating-system packages are separately installed prerequisites and retain their upstream/distribution licensing. They are not relicensed by this project's MIT license. See [dependency policy](docs/DEPENDENCIES.md).
 
 No endorsement by OpenAI, GitHub, Microsoft, Node.js or Go is implied.
+
+Standalone executables retain notices: the GUI embeds these license texts and exposes **Settings → View included licenses**; `pc-bridge-core.exe licenses` prints its own/Go/ws notices. Release verification compares extracted embedded notices byte-for-byte with the source files.

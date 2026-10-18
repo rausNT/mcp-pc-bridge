@@ -1,4 +1,4 @@
-* text=auto
+* text=auto eol=lf
 *.go text eol=lf
 *.mjs text eol=lf
 *.py text eol=lf
@@ -7,3 +7,4 @@
 *.json text eol=lf
 *.yml text eol=lf
 licenses/* -text
+windows/client/notices.txt -text

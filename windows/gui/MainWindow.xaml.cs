@@ -112,6 +112,17 @@ public partial class MainWindow : Window
         await RunAsync(async () => await _bridge.RunCoreAsync([enable ? "install-startup" : "uninstall-startup"]));
     }
     private void Folder_Click(object sender, RoutedEventArgs e) { try { BridgeService.OpenFolder(_bridge.StateDirectory); } catch (Exception ex) { ShowError(ex); } }
+    private void Licenses_Click(object sender,RoutedEventArgs e)
+    {
+        var assembly=System.Reflection.Assembly.GetExecutingAssembly();var text=new System.Text.StringBuilder();
+        foreach(var name in assembly.GetManifestResourceNames().Where(n=>n.StartsWith("PcBridge.Licenses.")).Order())
+        {
+            using var reader=new StreamReader(assembly.GetManifestResourceStream(name)!);
+            text.AppendLine("===== "+name["PcBridge.Licenses.".Length..]+" =====").AppendLine(reader.ReadToEnd()).AppendLine();
+        }
+        new Window {Title="PC Bridge — included licenses",Owner=this,Width=900,Height=700,WindowStartupLocation=WindowStartupLocation.CenterOwner,
+            Content=new TextBox {Text=text.ToString(),IsReadOnly=true,TextWrapping=TextWrapping.Wrap,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Margin=new Thickness(16)}}.ShowDialog();
+    }
     private void Guide_Click(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo("https://github.com/rausNT/mcp-pc-bridge/blob/main/docs/DEPLOYMENT.md") { UseShellExecute = true });
     private void Wizard_Click(object sender,RoutedEventArgs e)
     {

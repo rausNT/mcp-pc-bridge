@@ -93,6 +93,7 @@
       <TextBlock Text="Startup is opt-in. Removing startup does not stop an existing connection." Foreground="{DynamicResource MutedTextBrush}"/>
       <TextBlock x:Name="PathsText" Margin="0,24,0,20"/>
       <Button Content="Open this installation's folder" HorizontalAlignment="Left" Style="{StaticResource SecondaryButtonStyle}" Click="Folder_Click"/>
+      <Button Content="View included licenses" HorizontalAlignment="Left" Style="{StaticResource SecondaryButtonStyle}" Margin="0,12,0,0" Click="Licenses_Click"/>
       <TextBlock Text="The core keeps its console visible. This preview has no complete action-history viewer; do not share unredacted runtime logs." Margin="0,20,0,0"/>
      </StackPanel>
     </Grid>

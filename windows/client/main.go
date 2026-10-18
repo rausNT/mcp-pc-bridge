@@ -31,6 +31,9 @@ var embeddedSafety []byte
 //go:embed pc-tools.mjs
 var embeddedPcTools []byte
 
+//go:embed notices.txt
+var embeddedNotices string
+
 //go:embed package.json
 var embeddedPackage []byte
 
@@ -453,6 +456,8 @@ func main() {
 		}
 	case "version":
 		fmt.Println("MCP PC Bridge 0.2.0-preview.1")
+	case "licenses":
+		fmt.Print(embeddedNotices)
 	case "setup":
 		e = setup()
 	case "setup-from-env":
