@@ -1,0 +1,34 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "mcp-pc-bridge",
+  "version": "0.2.0-preview.1",
+  "description": "A fully self-hosted bridge from ChatGPT to your Windows PC through your own server. Includes Windows GUI, relay, HTTPS/OAuth gateway and deployment scripts.",
+  "keywords": [
+    "self-hosted",
+    "mcp",
+    "windows",
+    "chatgpt"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "MCP PC Bridge",
+        "shortDescription": "Your own server-to-PC bridge",
+        "longDescription": "Self-host the entire open-source bridge: Windows GUI and agent, relay, HTTPS/OAuth gateway, deployment scripts and plugin template. No mandatory author-hosted relay account or subscription. ChatGPT and the model are external services; results pass through your server to ChatGPT. Experimental broad Windows-user access: no enforced folder sandbox or per-action approval. Supply your own server, domain, TLS and credentials. The example URL is not a working service.",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": [
+          "Check whether my configured computer is online without changing files or settings."
+        ],
+        "developerName": "MCP PC Bridge contributors"
+      }
+    }
+  },
+  "author": {
+    "name": "MCP PC Bridge contributors"
+  },
+  "license": "MIT"
+}

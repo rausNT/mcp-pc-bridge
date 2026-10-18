@@ -1,0 +1,34 @@
+# Build products and third-party installations
+**/node_modules/
+**/__pycache__/
+**/bin/
+**/obj/
+*.pyc
+/dist/
+/windows/dist/
+/plugin/dist/
+/server/dist/
+# Credentials and runtime state
+.env
+.env.*
+!.env.example
+*.dpapi
+*.pem
+*.key
+*.pfx
+*.p12
+*private_key*
+**/owner-setup.json
+**/gateway.json
+**/config.json
+**/tokens.json
+**/relay.env
+**/agent.lock
+**/supervisor.lock
+*.log
+/runtime/
+/runtime-logs/
+# Local-only publisher notes must never enter public Git history
+PUBLISH_LOCAL.md
+*.local.md
+.local/

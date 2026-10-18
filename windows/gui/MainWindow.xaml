@@ -1,0 +1,105 @@
+<Window x:Class="PcBridge.Gui.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="PC Bridge — MCP PC Bridge" Width="1040" Height="760" MinWidth="920" MinHeight="680"
+ WindowStartupLocation="CenterScreen" Background="{DynamicResource WindowBrush}" FontFamily="Segoe UI" FontSize="14"
+ SourceInitialized="Window_SourceInitialized" Closing="Window_Closing">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Theme.xaml"/></ResourceDictionary.MergedDictionaries>
+  <Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+ </ResourceDictionary></Window.Resources>
+ <Grid>
+  <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition/></Grid.ColumnDefinitions>
+  <Border Background="{DynamicResource SidebarBrush}" Padding="18,25">
+   <DockPanel>
+    <StackPanel DockPanel.Dock="Top">
+     <TextBlock Text="PC Bridge" FontSize="25" FontWeight="SemiBold"/>
+     <TextBlock Text="Your server. Your computer." Margin="0,6,0,24" Foreground="{DynamicResource MutedTextBrush}"/>
+     <Button Content="Setup wizard" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,18" Click="Wizard_Click"/>
+     <Button x:Name="NavOverview" Style="{StaticResource NavButtonStyle}" Content="Overview" Click="Nav_Click" Tag="Overview"/>
+     <Button x:Name="NavSetup" Style="{StaticResource NavButtonStyle}" Content="Set up your PC" Click="Nav_Click" Tag="Setup"/>
+     <Button x:Name="NavSsh" Style="{StaticResource NavButtonStyle}" Content="SSH connection" Click="Nav_Click" Tag="Ssh"/>
+     <Button x:Name="NavServer" Style="{StaticResource NavButtonStyle}" Content="Your server" Click="Nav_Click" Tag="Server"/>
+     <Button x:Name="NavSettings" Style="{StaticResource NavButtonStyle}" Content="Settings" Click="Nav_Click" Tag="Settings"/>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+     <TextBlock Text="0.2.0-preview.1" FontWeight="SemiBold"/>
+     <TextBlock Text="Experimental · unsigned" Foreground="{DynamicResource MutedTextBrush}" Margin="0,5,0,0"/>
+    </StackPanel>
+   </DockPanel>
+  </Border>
+  <Grid Grid.Column="1" Margin="26">
+   <Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <Grid>
+     <StackPanel x:Name="OverviewPage">
+      <TextBlock Text="A bridge you host yourself" FontSize="28" FontWeight="SemiBold"/>
+      <TextBlock Text="Open Windows agent, relay and HTTPS/OAuth gateway." Foreground="{DynamicResource MutedTextBrush}" Margin="0,7,0,22"/>
+      <Border Style="{StaticResource CardStyle}">
+       <StackPanel><TextBlock Text="ChatGPT → Your HTTPS/OAuth gateway → Your relay → SSH → This PC → Built-in PC tools" FontSize="17"/>
+        <TextBlock Text="ChatGPT and the model remain external services. Requests and results pass through ChatGPT and your server." Margin="0,12,0,0" Foreground="{DynamicResource MutedTextBrush}"/></StackPanel>
+      </Border>
+      <Border Style="{StaticResource CardStyle}" Margin="0,16,0,16">
+       <StackPanel><TextBlock x:Name="StatusText" Text="Checking local components…" FontSize="22" FontWeight="SemiBold"/>
+        <TextBlock x:Name="StatusDetail" Margin="0,10,0,0"/>
+        <TextBlock Text="Local health and process checks do not prove device authentication or a ChatGPT OAuth session." Foreground="{DynamicResource MutedTextBrush}" Margin="0,12,0,0"/>
+       </StackPanel>
+      </Border>
+      <WrapPanel x:Name="ActionPanel">
+       <Button x:Name="StartButton" Content="Start" Style="{StaticResource PrimaryButtonStyle}" Click="Start_Click"/>
+       <Button x:Name="StopButton" Content="Stop" Style="{StaticResource SecondaryButtonStyle}" Click="Stop_Click"/>
+       <Button x:Name="RestartButton" Content="Restart" Style="{StaticResource SecondaryButtonStyle}" Click="Restart_Click"/>
+       <Button Content="Refresh" Style="{StaticResource SecondaryButtonStyle}" Click="Refresh_Click"/>
+      </WrapPanel>
+      <TextBlock Text="Closing this panel leaves the bridge running. Use Stop or the core console to disconnect. Detached jobs may continue." Margin="0,18,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
+     </StackPanel>
+     <StackPanel x:Name="SetupPage" Visibility="Collapsed">
+      <TextBlock Text="Set up your PC" FontSize="28" FontWeight="SemiBold"/>
+      <TextBlock Text="Deploy your own server first. Setup downloads pinned dependencies and creates a new local SSH key; it does not start remote access." Margin="0,8,0,20" Foreground="{DynamicResource MutedTextBrush}"/>
+      <TextBlock Text="Your SSH host (DNS name or IPv4)"/>
+      <TextBox x:Name="HostInput" Style="{StaticResource InputStyle}" Margin="0,6,0,14"/>
+      <TextBlock Text="Device ID (same as on your server)"/>
+      <TextBox x:Name="DeviceInput" Text="desktop" Style="{StaticResource InputStyle}" Margin="0,6,0,14"/>
+      <TextBlock Text="Device token from your server (entered only on this PC)"/>
+      <PasswordBox x:Name="TokenInput" Style="{StaticResource PasswordInputStyle}" Margin="0,6,0,14"/>
+      <Button x:Name="SetupButton" Content="Save and set up" HorizontalAlignment="Left" Style="{StaticResource PrimaryButtonStyle}" Click="Setup_Click"/>
+      <TextBlock Text="Then authorize the public key on your server and verify its SSH host key through a trusted console. See the SSH connection page." Margin="0,16,0,0"/>
+      <TextBox x:Name="SetupOutput" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="150" VerticalScrollBarVisibility="Auto" Style="{StaticResource InputStyle}" Margin="0,14,0,0"/>
+     </StackPanel>
+     <StackPanel x:Name="SshPage" Visibility="Collapsed">
+      <TextBlock Text="SSH connection" FontSize="28" FontWeight="SemiBold"/>
+      <TextBlock Text="A restricted identity forwards only to your relay. Root is not used for daily operation." Margin="0,8,0,20" Foreground="{DynamicResource MutedTextBrush}"/>
+      <Border Style="{StaticResource CardStyle}"><StackPanel>
+       <TextBlock x:Name="SshDetails"/>
+       <TextBlock Text="On first contact, compare the server fingerprint through your trusted server console. Use StrictHostKeyChecking=ask only to record the verified key; all bridge connections require StrictHostKeyChecking=yes." Margin="0,16,0,0"/>
+       <TextBox x:Name="TrustCommand" IsReadOnly="True" TextWrapping="Wrap" Style="{StaticResource InputStyle}" Margin="0,14,0,0"/>
+      </StackPanel></Border>
+      <WrapPanel Margin="0,18,0,0">
+       <Button x:Name="SshTestButton" Content="Test forwarding" Style="{StaticResource PrimaryButtonStyle}" Click="SshTest_Click"/>
+       <Button Content="Show public key" Style="{StaticResource SecondaryButtonStyle}" Click="PublicKey_Click"/>
+      </WrapPanel>
+      <TextBox x:Name="SshOutput" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="170" VerticalScrollBarVisibility="Auto" Style="{StaticResource InputStyle}" Margin="0,18,0,0"/>
+     </StackPanel>
+     <StackPanel x:Name="ServerPage" Visibility="Collapsed">
+      <TextBlock Text="Your server. An open-source bridge." FontSize="28" FontWeight="SemiBold"/>
+      <TextBlock Text="Deploy the included relay and HTTPS/OAuth gateway on your own fresh Ubuntu 24.04 server or VPS. No account or subscription to an author-operated relay is required." Margin="0,16,0,16"/>
+      <TextBlock Text="You supply the server, domain and ChatGPT access. These services may have costs. The setup wizard installs a fresh server after your review and can obtain and renew its HTTPS certificate." Margin="0,0,0,20"/>
+      <Border Style="{StaticResource CardStyle}"><StackPanel>
+       <TextBlock Text="1. Follow docs/DEPLOYMENT.md: preflight, then explicit installation.&#x0a;2. Authorize this PC's public key with server/authorize-device.py.&#x0a;3. Verify host-key trust, forwarding and TLS.&#x0a;4. Customize the plugin template for your own HTTPS endpoint.&#x0a;5. Complete OAuth in ChatGPT, test a synthetic file and test revocation."/>
+      </StackPanel></Border>
+      <Button Content="Open deployment guide" HorizontalAlignment="Left" Style="{StaticResource PrimaryButtonStyle}" Margin="0,20,0,0" Click="Guide_Click"/>
+     </StackPanel>
+     <StackPanel x:Name="SettingsPage" Visibility="Collapsed">
+      <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold"/>
+      <CheckBox x:Name="StartupCheck" Content="Start the visible core console when I sign in to Windows" Foreground="{DynamicResource TextBrush}" Margin="0,24,0,18" Checked="Startup_Changed" Unchecked="Startup_Changed"/>
+      <TextBlock Text="Startup is opt-in. Removing startup does not stop an existing connection." Foreground="{DynamicResource MutedTextBrush}"/>
+      <TextBlock x:Name="PathsText" Margin="0,24,0,20"/>
+      <Button Content="Open this installation's folder" HorizontalAlignment="Left" Style="{StaticResource SecondaryButtonStyle}" Click="Folder_Click"/>
+      <TextBlock Text="The core keeps its console visible. This preview has no complete action-history viewer; do not share unredacted runtime logs." Margin="0,20,0,0"/>
+     </StackPanel>
+    </Grid>
+   </ScrollViewer>
+   <Border Grid.Row="1" Background="{DynamicResource AccentSoftBrush}" CornerRadius="10" Padding="14" Margin="0,18,0,0">
+    <TextBlock Text="Experimental: remote file access and commands run with your Windows user's rights. No enforced folder sandbox or per-action approval. Run as a normal user." FontSize="12"/>
+   </Border>
+  </Grid>
+ </Grid>
+</Window>

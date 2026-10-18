@@ -1,0 +1,74 @@
+<Window x:Class="PcBridge.Gui.SetupWizard" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="PC Bridge setup" Width="800" Height="790" MinWidth="720" MinHeight="680" WindowStartupLocation="CenterOwner" Background="{DynamicResource WindowBrush}" FontFamily="Segoe UI" FontSize="14" Closing="Window_Closing">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Theme.xaml"/></ResourceDictionary.MergedDictionaries>
+  <Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,5,0,5"/></Style>
+  <Style TargetType="CheckBox"><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="Margin" Value="0,10,0,10"/></Style>
+ </ResourceDictionary></Window.Resources>
+ <Grid Margin="28"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <StackPanel><TextBlock Text="MCP PC Bridge" FontSize="28" FontWeight="SemiBold"/><TextBlock x:Name="StepTitle" FontSize="18" Foreground="{DynamicResource AccentBrush}"/></StackPanel>
+  <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,14,0,14"><Grid>
+   <StackPanel x:Name="Step0">
+    <TextBlock Text="Your server → your Windows PC → ChatGPT" FontSize="23"/>
+    <TextBlock Text="This wizard installs the open-source bridge on a fresh Ubuntu 24.04 VPS, prepares this PC and creates your personal plugin package. You provide the VPS and domain; ChatGPT stays an external service."/>
+    <TextBlock Text="You need administrator SSH access (root), a domain pointing to the VPS, and inbound TCP 22, 80 and 443. The relay port 8787 stays private. Existing installations are never overwritten."/>
+    <TextBlock Text="SSH passwords and host-key confirmation appear in a local OpenSSH terminal. Compare the fingerprint through your VPS console. Credentials are not sent to the application author."/>
+    <TextBlock Text="Experimental preview: commands and files use your Windows account's permissions. No enforced folder sandbox, per-action approvals or guaranteed stop of detached jobs."/>
+    <CheckBox x:Name="Consent" Content="I understand the access and want to set up my own bridge."/>
+    <CheckBox x:Name="InstallApp" IsChecked="True" Content="Install PC Bridge in my Start menu when I click Next."/>
+    <TextBlock Text="This copies the app to your local Programs folder. It does not enable startup or connect the bridge." Foreground="{DynamicResource MutedTextBrush}"/>
+   </StackPanel>
+   <StackPanel x:Name="Step1" Visibility="Collapsed">
+    <TextBlock Text="SSH host / IPv4"/><TextBox x:Name="Host" Style="{StaticResource InputStyle}"/>
+    <TextBlock Text="Your public MCP domain (DNS A record must point to this VPS)"/><TextBox x:Name="Domain" Style="{StaticResource InputStyle}"/>
+    <TextBlock Text="Device ID"/><TextBox x:Name="Device" Text="desktop" Style="{StaticResource InputStyle}"/>
+    <CheckBox x:Name="Existing" Content="This server already has this MCP PC Bridge version installed."/>
+    <CheckBox x:Name="AutomaticTls" IsChecked="True" Content="Obtain and renew HTTPS automatically with Let's Encrypt."/>
+    <TextBlock Text="Certificate email (automatic HTTPS)"/><TextBox x:Name="Email" Style="{StaticResource InputStyle}"/>
+    <CheckBox x:Name="AcmeConsent" Content="I accept Let's Encrypt's subscriber agreement for automatic HTTPS."/>
+    <Button Content="Read the agreement" HorizontalAlignment="Left" Style="{StaticResource SecondaryButtonStyle}" Click="Acme_Click"/>
+    <TextBlock Text="For your existing certificate instead: clear automatic HTTPS and enter both server paths."/>
+    <TextBox x:Name="Cert" Style="{StaticResource InputStyle}" ToolTip="Absolute fullchain.pem path"/>
+    <TextBox x:Name="Key" Style="{StaticResource InputStyle}" ToolTip="Absolute private key path" Margin="0,8,0,0"/>
+   </StackPanel>
+   <StackPanel x:Name="Step2" Visibility="Collapsed">
+    <TextBlock Text="Review the server installation" FontSize="23"/><TextBlock x:Name="Review"/>
+    <TextBlock Text="The installer refuses existing bridge paths/users or occupied ports before installation. A failed connection can leave a partial installation; the wizard records the attempt and blocks blind repetition."/>
+    <TextBlock Text="Your root SSH terminal will open. You may be asked for the SSH password more than once. Keep this wizard open until the command finishes."/>
+    <Button Content="Inspect server state" HorizontalAlignment="Left" Style="{StaticResource SecondaryButtonStyle}" Click="Inspect_Click"/>
+   </StackPanel>
+   <StackPanel x:Name="Step3" Visibility="Collapsed">
+    <TextBlock Text="Prepare this Windows PC" FontSize="23"/>
+    <Button Content="Show setup values in my SSH terminal" HorizontalAlignment="Left" Style="{StaticResource SecondaryButtonStyle}" Click="Secrets_Click"/>
+    <TextBlock Text="Copy deviceToken from that private terminal into the field below. Keep clientId, clientSecret and ownerPassword for the ChatGPT step. Never paste these values into a chat or issue."/>
+    <TextBlock Text="Device token"/><PasswordBox x:Name="Token" Style="{StaticResource PasswordInputStyle}"/>
+    <TextBlock Text="Next installs pinned Node dependencies, creates this installation's SSH key, and stores the token using Windows DPAPI. No connection or startup is enabled yet."/>
+   </StackPanel>
+   <StackPanel x:Name="Step4" Visibility="Collapsed">
+    <TextBlock Text="Pair and start" FontSize="23"/>
+    <TextBlock Text="Next uploads only this PC's public SSH key, authorizes the restricted mcp-pc-bridge-agent identity on your server, verifies SSH forwarding and starts the visible core console."/>
+    <TextBlock Text="The server's SSH policy is validated before reload. This key permits local TCP forwarding to the relay; it cannot log in to a shell. Private keys stay on this PC."/>
+    <TextBlock Text="This step enables remote file and command access. Stop is available in Overview after setup. Closing the panel leaves the core connected."/>
+   </StackPanel>
+   <StackPanel x:Name="Step5" Visibility="Collapsed">
+    <TextBlock Text="Connect ChatGPT" FontSize="23"/>
+    <TextBlock x:Name="Endpoint"/>
+    <TextBlock Text="Public OAuth client ID (clientId, not clientSecret)"/><TextBox x:Name="ClientId" Style="{StaticResource InputStyle}"/>
+    <Button Content="Create my plugin package and open ChatGPT" HorizontalAlignment="Left" Style="{StaticResource PrimaryButtonStyle}" Margin="0,14,0,8" Click="Plugin_Click"/>
+    <TextBlock Text="In ChatGPT Plugins, use + → Add custom MCP server. Enter the MCP URL, choose OAuth and provide the client ID/secret locally. Review the warning, create the plugin and authorize it with ownerPassword on your own domain. Availability depends on your account/workspace."/>
+    <TextBlock Text="The ZIP contains your endpoint and public client ID, never your token or client secret. It is available for a supported plugin import or local marketplace flow. Creating the ZIP does not install it in your ChatGPT account."/>
+    <TextBlock Text="If ChatGPT shows a different callback, paste that exact HTTPS redirect here:"/>
+    <TextBox x:Name="Callback" Text="https://chatgpt.com/connector_platform_oauth_redirect" Style="{StaticResource InputStyle}"/>
+    <Button Content="Allow this exact callback on my server" HorizontalAlignment="Left" Style="{StaticResource SecondaryButtonStyle}" Margin="0,10,0,4" Click="Callback_Click"/>
+    <CheckBox x:Name="Verified" Content="I completed OAuth and verified the relay status in ChatGPT."/>
+    <TextBlock Text="The wizard does not inspect your ChatGPT session. This is your confirmation; local health is shown separately." Foreground="{DynamicResource MutedTextBrush}"/>
+   </StackPanel>
+   <StackPanel x:Name="Step6" Visibility="Collapsed">
+    <TextBlock Text="Setup steps completed" FontSize="23"/>
+    <TextBlock Text="Your bridge uses your own server and this PC. ChatGPT OAuth was confirmed by you, not independently verified by the panel. Try a harmless synthetic file, then test access revocation before using personal files."/>
+    <TextBlock Text="The main window provides local status and Stop/Restart. Startup remains off unless you enable it separately. Keep your domain, certificate renewal and server updates maintained."/>
+   </StackPanel>
+  </Grid></ScrollViewer>
+  <TextBlock x:Name="Progress" Grid.Row="2" Foreground="{DynamicResource WarnBrush}" Margin="0,5,0,12"/>
+  <DockPanel Grid.Row="3"><Button x:Name="Back" Content="Back" DockPanel.Dock="Left" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click"/><Button x:Name="Next" Content="Next" HorizontalAlignment="Right" Style="{StaticResource PrimaryButtonStyle}" Click="Next_Click"/></DockPanel>
+ </Grid>
+</Window>

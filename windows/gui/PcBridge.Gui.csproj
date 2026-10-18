@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RuntimeFrameworkVersion>10.0.8</RuntimeFrameworkVersion>
+    <Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>pc-bridge</AssemblyName><RootNamespace>PcBridge.Gui</RootNamespace>
+    <Version>0.2.0-preview.1</Version>
+    <PublishTrimmed>false</PublishTrimmed><DebugType>none</DebugType>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../dist/pc-bridge-core.exe" LogicalName="PcBridge.Core" />
+    <EmbeddedResource Include="../../dist/mcp-pc-bridge-server.tar.gz" LogicalName="PcBridge.Server" />
+    <EmbeddedResource Include="../../dist/mcp-pc-bridge-plugin-template.zip" LogicalName="PcBridge.Plugin" />
+  </ItemGroup>
+</Project>

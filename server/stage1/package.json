@@ -1,0 +1,26 @@
+{
+  "name": "mcp-pc-bridge-relay",
+  "version": "0.2.0-preview.1",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted MCP relay for MCP PC Bridge local tools",
+  "scripts": {
+    "server": "node src/server.mjs",
+    "agent": "node src/agent.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:unit": "node --test tests/unit.test.mjs",
+    "test:integration": "node --test tests/integration.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.3.1",
+    "@modelcontextprotocol/express": "2.0.2",
+    "@modelcontextprotocol/node": "2.1.1",
+    "@modelcontextprotocol/server": "2.3.1",
+    "express": "5.2.1",
+    "ws": "8.21.3"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "mcp-pc-bridge-windows-agent-runtime",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "ws": "8.21.3"
+  },
+  "version": "0.2.0-preview.1",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
